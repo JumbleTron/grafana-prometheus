@@ -15,14 +15,17 @@ const register = new promClient.Registry()
 promClient.collectDefaultMetrics({ register });
 
 const Histogram = promClient.Histogram;
+const Counter = promClient.Counter;
 const requestDuration = new Histogram({
     name: 'http_request_duration_seconds',
     help: 'request duration histogram',
     labelNames: ['handler' , 'method', 'statuscode'],
     buckets: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10],
 });
+const orderCounter = new Counter({ name: 'orders_total', 'help': 'Total of orders' })
 
 register.registerMetric(requestDuration)
+register.registerMetric(orderCounter)
 
 const profilerMiddleware = (req, res, next) => {
     if (['/metrics', '/health'].includes(req.url)) {
@@ -45,6 +48,11 @@ app.listen(PORT, () => {
 
 app.get('/', (req, res) => {
     res.send('Hello World!')
+})
+
+app.post('/orders', (req, res) => {
+    orderCounter.inc(1);
+    res.send('Orders saved');
 })
 
 app.get('/users', (req, res) => {
