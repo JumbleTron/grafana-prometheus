@@ -7,9 +7,11 @@ services:
       context: .
     ports:
       - '5555:5555'
+      - '5005:5005'
     volumes:
       - ./:/opt/app
-    command: ['npm', 'run', 'start:dev']
+    #command: ['npm', 'run', 'start:dev']
+    command: ['npm', 'run', 'start:cluster']
     labels:
       logging: 'promtail'
       logging_jobname: 'containerlogs'
