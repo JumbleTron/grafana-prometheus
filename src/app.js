@@ -27,6 +27,8 @@ const orderCounter = new Counter({ name: 'orders_total', 'help': 'Total of order
 register.registerMetric(requestDuration)
 register.registerMetric(orderCounter)
 
+const random = (min, max) => Math.floor(Math.random() * (max - min + 1) + min)
+
 const profilerMiddleware = (req, res, next) => {
     if (['/metrics', '/health'].includes(req.url)) {
         next();
@@ -50,8 +52,10 @@ app.get('/', (req, res) => {
     res.send('Hello World!')
 })
 
-app.post('/orders', (req, res) => {
-    orderCounter.inc(1);
+app.post('/orders', async (req, res) => {
+    for (let i = 0; i < random(1000, 3000); i++) {
+        orderCounter.inc(1);
+    }
     res.send('Orders saved');
 })
 

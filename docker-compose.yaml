@@ -1,8 +1,8 @@
 version: '3.8'
 
 services:
-  app:
-    container_name: express-app
+  app01:
+    container_name: express_app_01
     build:
       context: .
     ports:
@@ -10,8 +10,24 @@ services:
       - '5005:5005'
     volumes:
       - ./:/opt/app
-    #command: ['npm', 'run', 'start:dev']
-    command: ['npm', 'run', 'start:cluster']
+    command: ['npm', 'run', 'start:dev']
+    #command: ['npm', 'run', 'start:cluster']
+    labels:
+      logging: 'promtail'
+      logging_jobname: 'containerlogs'
+    networks:
+      - monitoring
+  app02:
+    container_name: express_app_02
+    build:
+      context: .
+    ports:
+      - '5556:5555'
+      - '5006:5005'
+    volumes:
+      - ./:/opt/app
+    command: [ 'npm', 'run', 'start:dev' ]
+    #command: ['npm', 'run', 'start:cluster']
     labels:
       logging: 'promtail'
       logging_jobname: 'containerlogs'
